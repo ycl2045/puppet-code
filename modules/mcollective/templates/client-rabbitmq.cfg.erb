@@ -1,0 +1,25 @@
+main_collective = mcollective
+collectives = mcollective
+
+libdir = /opt/puppetlabs/mcollective/plugins
+
+# consult the "classic" libdirs too
+libdir = /usr/share/mcollective/plugins
+libdir = /usr/libexec/mcollective
+
+logger_type = console
+loglevel = warn
+
+# Plugins
+securityprovider = psk
+plugin.psk = a36cd839414370e10fd281b8a38a4f48
+
+connector = rabbitmq
+plugin.rabbitmq.vhost = /mcollective
+plugin.rabbitmq.pool.size = 1
+plugin.rabbitmq.pool.1.host = localhost
+plugin.rabbitmq.pool.1.port = 61613
+plugin.rabbitmq.pool.1.user = mcollective
+plugin.rabbitmq.pool.1.password = yunjikeji
+
+connection_timeout = 3

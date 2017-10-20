@@ -1,0 +1,111 @@
+<%
+case @osfamily
+when 'windows'
+	purootdir = 'C:/ProgramData/PuppetLabs/puppet'
+	ssldir = purootdir + '/etc/ssl'
+	mcrootdir = 'C:/ProgramData/PuppetLabs/mcollective'
+	mccfgdir = mcrootdir + '/etc'
+	mcssldir = 'C:/programdata/PuppetLabs/mcollective/etc'
+	libdir = mcrootdir + '/lib;' + mcrootdir + '/plugins;C:/Program Files/Puppet Labs/Puppet/puppet/lib;C:/Program Files/Puppet Labs/Puppet/facter/lib;C:/Program Files/Puppet Labs/Puppet/hiera/lib;C:/Proagram Files/Puppet Labs/Puppet/mcollective/lib'
+	logdir = mcrootdir + '/var/log'
+	daemonize = 1
+when /^RedHat|Suse$/
+	ssldir = '/etc/puppetlabs/puppet/ssl'
+	mccfgdir = '/etc/puppetlabs/mcollective'
+	mcssldir = mccfgdir
+	libdir = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/mcollective'
+	logdir = '/var/log'
+	daemonize = 1
+when 'HP-UX'
+	ssldir = '/home/ap/opscloud/ruby/etc/ssl'
+    mccfgdir = '/home/ap/opscloud/ruby/etc'
+    mcssldir = mccfgdir
+    libdir = '/home/ap/opscloud/ruby/plugins'
+    logdir = '/var/log'
+    daemonize = 1
+when 'AIX'
+	ssldir = '/var/lib/puppet/ssl'
+	mccfgdir = '/etc/mcollective'
+	mcssldir = mccfgdir
+	libdir = '/usr/libexec/mcollective'
+	logdir = '/var/log'
+	daemonize = 0
+end
+%>
+# ActiveMQ connector settings:
+connector = activemq
+direct_addressing = 1
+plugin.activemq.pool.size = <%= @mqs.count %>
+<% @mqs.count.times do |n| -%>
+plugin.activemq.pool.<%= n+1 %>.host = <%= @mqs[n]['host'] %>
+plugin.activemq.pool.<%= n+1 %>.port = 61613
+plugin.activemq.pool.<%= n+1 %>.user = mcollective
+plugin.activemq.pool.<%= n+1 %>.password = <%= @mqs[n]['passwd'] %>
+<% end %>
+
+# SSL security plugin settings:
+securityprovider = ssl
+plugin.ssl_client_cert_dir = <%= mcssldir%>/clients
+plugin.ssl_server_private = <%= mcssldir%>/server_private.pem
+plugin.ssl_server_public = <%= mcssldir%>/server_public.pem
+plugin.ssl_serializer = yaml
+
+# Facts, identity, and classes:
+identity = <%= @ipaddress %>
+factsource = yaml
+plugin.yaml = <%= mccfgdir%>/facts.yaml
+classesfile = <%= scope['settings::statedir'] %>
+
+# No additional subcollectives:
+collectives = mcollective
+main_collective = mcollective
+
+# Registration:
+# We don't configure a listener, and only send these messages to keep the
+# Stomp connection alive. This will use the default "agentlist" registration
+# plugin.
+registerinterval = 600
+
+# Auditing (optional):
+# If you turn this on, you must arrange to rotate the log file it creates.
+# gaolg
+rpcaudit = 1
+rpcauditprovider = logfile
+plugin.rpcaudit.logfile = <%= logdir%>/mcollective-audit.log
+
+# Authorization:
+# If you turn this on now, you won't be able to issue most MCollective
+# commands, although `mco ping` will work. You should deploy the
+# ActionPolicy plugin before uncommenting this; see "Deploy Plugins" below.
+
+# rpcauthorization = 1
+# rpcauthprovider = action_policy
+# plugin.actionpolicy.allow_unconfigured = 1
+
+# Logging:
+logger_type = file
+loglevel = info
+logfile = <%= logdir%>/mcollective.log
+keeplogs = 5
+max_log_size = 2097152
+logfacility = user
+
+# Platform defaults:
+# These settings differ based on platform; the default config file created by
+# the package should include correct values. If you are managing settings as
+# resources, you can ignore them, but with a template you'll have to account
+# for the differences.
+#<% if scope.lookupvar('::osfamily') == 'RedHat' -%>
+#libdir = /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/mcollective
+#daemonize = 1
+#<% elsif scope.lookupvar('::osfamily') == 'Debian' -%>
+#libdir = /usr/share/mcollective/plugins
+#daemonize = 1
+#<% elsif scope.lookupvar('::osfamily') == 'windows' -%>
+#libdir = /usr/share/mcollective/plugins
+#<% else -%>
+# INSERT PLATFORM-APPROPRIATE VALUES FOR LIBDIR AND DAEMONIZE
+#<% end %>
+
+libdir = <%= libdir%>
+daemonize = <%= daemonize%>

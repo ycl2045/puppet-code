@@ -1,0 +1,16 @@
+{
+  "repo": {
+    "connection":"<%= @mysql_user%>:<%= @mysqlpassword%>@tcp(<%= @mysqlip%>:<%= @mysqlport%>)/idcos-osinstall?charset=utf8&parseTime=True&loc=Local"
+  },
+  "osInstall":{
+    "pxeConfigDir":"/var/lib/tftpboot/pxelinux.cfg"
+   },
+  "logger":{
+      "logFile":"/var/log/osinstall-server.log",
+      "level":"debug"
+  },
+  "rsa":{
+    "publicKey":"/etc/osinstall-server/public.pem",
+    "privateKey":"/etc/osinstall-server/private.pem"
+  }
+}

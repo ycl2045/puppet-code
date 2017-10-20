@@ -1,0 +1,6 @@
+# cat /etc/yum.repos.d/CentOS-Base.repo
+# cat /etc/yum.repos.d/idcos.repo
+[idcos]
+name=idcos-$releasever
+baseurl=http://dcosfile.qdn.hfdev/redhat/$releasever/os/$basearch/
+gpgcheck=0

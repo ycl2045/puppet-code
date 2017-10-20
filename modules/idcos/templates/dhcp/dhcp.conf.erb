@@ -1,0 +1,17 @@
+allow booting;
+allow bootp;
+ddns-update-style none;
+ping-check true;
+ping-timeout 3;
+default-lease-time 1800;
+max-lease-time 3600;
+next-server 192.168.0.1;
+filename "gpxelinux.0";
+option domain-name-servers <%= @domain_name_servers%>;
+option domain-search "<%= @domain_name%>";
+option root-path "<%= @routeip %>:/";
+
+subnet <%= @subnetip%> netmask <%= @netmaskip %> {
+    range <%= @beginip %> <%= @endip%> ;
+    option routers <%= @routeip %>;
+}

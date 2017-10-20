@@ -1,0 +1,52 @@
+[Global]
+servicePort = 8081
+
+[VmCreate]
+user = root
+password = yunjikeji
+host = kvmserver1.idcos.net
+port = 22
+authKey =
+authType = PASSWORD                  # KEY or PASSWORD
+cmd = /usr/local/sbin/vm_create_api.sh
+
+[VmDestroy]
+user = root
+password = yunjikeji
+host = kvmserver1.idcos.net
+port = 22
+authKey =
+authType = PASSWORD                  # KEY or PASSWORD
+cmd = /usr/local/sbin/vm_destroy_api.sh
+
+[Publish]
+user = root
+password = yunjikeji
+host = yum.idcos.net
+port = 22
+authKey =
+authType = PASSWORD                  # KEY or PASSWORD
+cmd = /usr/local/bin/publish_api.sh
+
+[RpmBuild]
+user = <%= @user%>
+password = <%= @user_password%>
+host = <%= @rpmurl.split(':')[0]%>
+port = 22
+authKey =
+authType = PASSWORD                  # KEY or PASSWORD
+cmd = /usr/local/bin/rpmbuild.sh
+
+[TarPack]
+user = <%= @user%>
+password = <%= @user_password%>
+host = <%= @tarurl.split(':')[0]%>
+port = 22
+authKey =
+authType = PASSWORD                  # KEY or PASSWORD
+cmd = /usr/local/bin/targz
+
+[Log]
+handle = FILE                # CONSOLE or FILE
+level = debug                   # debug info warning error fatal
+logPath = /tmp/shell-service.log

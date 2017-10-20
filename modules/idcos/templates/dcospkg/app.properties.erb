@@ -1,0 +1,21 @@
+#mysql
+database.driverClassName = com.mysql.jdbc.Driver
+database.url = jdbc:mysql://<%= @db_ip%>:3306/idcos?characterEncoding=UTF-8
+database.username = <%= @db_user%>
+database.password = <%= @db_password%>
+
+#test
+raml.file.path=../../../../codegen/controllers
+
+firstVersionNumber=1.0.0
+pkgScriptFilePath=idcos
+pkgRpmUrl=<%= @rpmurl%>/shell/rpm     #http://localhost:8081/shell/rpm
+pkgTarUrl=<%= @tarurl%>/shell/targz               #http://locahost:8081/shell/targz
+pkgYumTarPath=/home/www/tars
+pkgYumRpmPath=/home/www/rpms
+upload.dir=/home/sharedata
+
+
+process.service.url=http://process.dev.idcos.net:8080
+shell.service.url=<%= @shellurl%> #http://localhost:8081
+instruction.service.url=http://instruction.dev.idcos.net:8080
