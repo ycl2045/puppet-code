@@ -1,75 +1,14 @@
-class mcollective::server($mqs) {
-    tag 'mcollective_server'
-	case $::os['family'] {
-		/(RedHat|CentOS|AIX)/ :{
+# private class
+class mcollective::server {
+  if $caller_module_name != $module_name {
+    fail("Use of private class ${name} by ${caller_module_name}")
+  }
 
-			file {'/opt/puppetlabs/puppet/bin/mcollectived':
-                source  => 'puppet:///modules/mcollective/server/mcollectived',
-                owner   =>      'root',
-                group   =>      'root',
-                mode    =>      '755',
-            }
-			file { "$mcollective_dir/facts.yaml":
-				ensure	=>	file,
-				mode	=>	'400',
-				content	=>	template('mcollective/facts.yaml.erb'),
-			}
+  contain ::mcollective::server::install
+  contain ::mcollective::server::config
+  contain ::mcollective::server::service
 
-			file {
-				"$mcollective_dir/server_private.pem":
-					owner   =>      'root',
-                    group   =>      'root',
-                    mode    =>      '600',
-					source	=>	'puppet:///modules/mcollective/server/server_private.pem';
-				"$mcollective_dir/server_public.pem":
-					owner   =>      'root',
-                    group   =>      'root',
-                    mode    =>      '600',
-					source	=>	'puppet:///modules/mcollective/server/server_public.pem';
-				"$mcollective_dir/server.cfg":
-					content	=>	template('mcollective/server-rabbitmq.cfg.erb');
-				"$mcollective_dir/clients":
-					mode	=>	'600',
-					source	=>	'puppet:///modules/mcollective/server/clients',
-					purge	=>	true,
-					force	=>	true,
-					recurse	=>	true;
-			} ~>
-			service { 'mcollective':
-				ensure	=>	running,
-				enable	=>	true,
-			}
-		}
-		/windows/ :{
-			file { "$mcollective_dir/facts.yaml":
-				ensure	=>	file,
-				mode	=>	'400',
-				content	=>	template('mcollective/facts.yaml.erb'),
-			}
-
-			file {
-				"$mcollective_dir/server_private.pem":
-                   			 mode    =>      '600',
-					source	=>	'puppet:///modules/mcollective/server/server_private.pem';
-				"$mcollective_dir/server_public.pem":
-                    			mode    =>      '600',
-					source	=>	'puppet:///modules/mcollective/server/server_public.pem';
-				"$mcollective_dir/server.cfg":
-					content	=>	template('mcollective/server-rabbitmq.cfg.erb');
-				"$mcollective_dir/clients":
-					mode	=>	'600',
-					source	=>	'puppet:///modules/mcollective/server/clients',
-					purge	=>	true,
-					force	=>	true,
-					recurse	=>	true;
-			} ~>
-			service { 'mcollective':
-				ensure	=>	running,
-				enable	=>	true,
-			}
-		}
-		default :{
-			fail("not support system")
-		}
-	}
+  Class['mcollective::server::install'] ->
+  Class['mcollective::server::config']  ~>
+  Class['mcollective::server::service']
 }

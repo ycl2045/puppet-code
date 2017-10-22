@@ -1,13 +1,14 @@
-class mcollective::client($mqs) {
-	# client config file
-	file { "/etc/puppetlabs/mcollective/client.cfg":
-		content	=>	template('mcollective/client-rabbitmq.cfg.erb'),
-		notify	=>	Service['mcollective'],
-	}
+# private class
+# Installs the client and sets up /etc/mcollective/client.cfg (global/common
+# configuration)
+class mcollective::client {
+  if $caller_module_name != $module_name {
+    fail("Use of private class ${name} by ${caller_module_name}")
+  }
 
-	# client for shell plugin
-	file { "/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/mcollective/application":
-		source	=>	'puppet:///modules/mcollective/plugins/application',
-		recurse	=>	remote,
-	}
+  contain ::mcollective::client::install
+  contain ::mcollective::client::config
+
+  Class['mcollective::client::install'] ->
+  Class['mcollective::client::config']
 }
