@@ -2,8 +2,6 @@ class mcollective::server($mqs) {
     tag 'mcollective_server'
 	case $::os['family'] {
 		/(RedHat|CentOS|AIX)/ :{
-			$mcollective_dir = "/etc/puppetlabs/mcollective"
-			$mcollective_lib = "/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/mcollective"
 
 			file {'/opt/puppetlabs/puppet/bin/mcollectived':
                 source  => 'puppet:///modules/mcollective/server/mcollectived',
@@ -36,9 +34,6 @@ class mcollective::server($mqs) {
 					purge	=>	true,
 					force	=>	true,
 					recurse	=>	true;
-				"$mcollective_lib":
-					source	=>	'puppet:///modules/mcollective/plugins',
-					recurse	=>	remote,
 			} ~>
 			service { 'mcollective':
 				ensure	=>	running,
@@ -46,8 +41,6 @@ class mcollective::server($mqs) {
 			}
 		}
 		/windows/ :{
-			$mcollective_dir = "c:/programdata/puppetlabs/mcollective/etc"
-			$mcollective_lib = "C:/puppetlabs/puppet/mcollective/lib/mcollective"
 			file { "$mcollective_dir/facts.yaml":
 				ensure	=>	file,
 				mode	=>	'400',
@@ -69,9 +62,6 @@ class mcollective::server($mqs) {
 					purge	=>	true,
 					force	=>	true,
 					recurse	=>	true;
-				"$mcollective_lib":
-					source	=>	'puppet:///modules/mcollective/plugins',
-					recurse	=>	remote,
 			} ~>
 			service { 'mcollective':
 				ensure	=>	running,

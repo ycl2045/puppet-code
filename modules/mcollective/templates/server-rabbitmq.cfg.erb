@@ -1,35 +1,21 @@
 <%
 case @osfamily
 when 'windows'
-	purootdir = 'C:/ProgramData/PuppetLabs/puppet'
-	ssldir = purootdir + '/etc/ssl'
-	mcrootdir = 'C:/ProgramData/PuppetLabs/mcollective'
-	mccfgdir = mcrootdir + '/etc'
-	mcssldir = 'C:/programdata/PuppetLabs/mcollective/etc'
-	libdir = mcrootdir + '/lib;' + mcrootdir + '/plugins;C:/Program Files/Puppet Labs/Puppet/puppet/lib;C:/Program Files/Puppet Labs/Puppet/facter/lib;C:/Program Files/Puppet Labs/Puppet/hiera/lib;C:/Proagram Files/Puppet Labs/Puppet/mcollective/lib'
-	logdir = mcrootdir + '/var/log'
+	purootdir = @osfamily
+	ssldir = @ssldir
+	mcrootdir = @mcrootdir
+	mccfgdir = @mccfgdir
+	mcssldir = @mcssldir
+	libdir = @libdir
+	logdir = @logdir
 	daemonize = 1
-when /^RedHat|Suse$/
-	ssldir = '/etc/puppetlabs/puppet/ssl'
-	mccfgdir = '/etc/puppetlabs/mcollective'
-	mcssldir = mccfgdir
-	libdir = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/mcollective'
-	logdir = '/var/log'
+else
+	ssldir = @ssldir
+	mccfgdir = @mccfgdir
+	mcssldir = @mccfgdir
+	libdir = @libdir
+	logdir = @logdir
 	daemonize = 1
-when 'HP-UX'
-	ssldir = '/home/ap/opscloud/ruby/etc/ssl'
-    mccfgdir = '/home/ap/opscloud/ruby/etc'
-    mcssldir = mccfgdir
-    libdir = '/home/ap/opscloud/ruby/plugins'
-    logdir = '/var/log'
-    daemonize = 1
-when 'AIX'
-	ssldir = '/var/lib/puppet/ssl'
-	mccfgdir = '/etc/mcollective'
-	mcssldir = mccfgdir
-	libdir = '/usr/libexec/mcollective'
-	logdir = '/var/log'
-	daemonize = 0
 end
 %>
 # RabbitMQ connector settings:
