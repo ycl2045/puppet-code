@@ -43,12 +43,28 @@
 # Copyright 2017 Your name here, unless otherwise noted.
 #
 class health {
-	file{"/opt/puppetlabs/facter/facts.d":
-	  mode    =>      '755',
-          source  =>      'puppet:///modules/health/facts.d',
+
+    if $::os['family'] == 'windows'{
+       $source_path='windows'
+       $dest_path='c:/programdata/puppetlabs/facter/facts.d'
+       file{"$dest_path":
+          source  =>      "puppet:///modules/health/facts.d/${source_path}",
           purge   =>      true,
           force   =>      true,
           recurse =>      true
-	}
+        }
+
+    } else {
+       $source_path='linux'
+       $dest_path='/opt/puppetlabs/facter/facts.d'
+       file{"$dest_path":
+          mode    =>      '755',
+          source  =>      "puppet:///modules/health/facts.d/${source_path}",
+          purge   =>      true,
+          force   =>      true,
+          recurse =>      true
+        }
+
+       }
 
 }
