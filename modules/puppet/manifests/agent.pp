@@ -66,6 +66,10 @@ class puppet::agent (
                 section =>  'agent',
                 setting =>  'certificate_revocation',
                 value =>  false;
+            'certname':
+                section =>  'agent',
+                setting =>  'certname',
+                value =>  ${gfcertname};
             'report':
                 section =>  'agent',
                 setting =>  'report',
